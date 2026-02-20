@@ -1,0 +1,10 @@
+tag: n9__aug-imagedatagenerator__bs1024__run1
+n: 9
+aug_method: imagedatagenerator
+batch_size: 1024
+run_id: 1
+epochs: 200
+seconds: 3916.28657579422
+final_train_acc: 0.9265333414077759
+final_val_acc: 0.8632000088691711
+best_val_acc: 0.8751999735832214

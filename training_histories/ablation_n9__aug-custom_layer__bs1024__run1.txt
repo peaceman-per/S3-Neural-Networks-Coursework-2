@@ -1,0 +1,10 @@
+tag: n9__aug-custom_layer__bs1024__run1
+n: 9
+aug_method: custom_layer
+batch_size: 1024
+run_id: 1
+epochs: 200
+seconds: 3676.1088168621063
+final_train_acc: 0.8748666644096375
+final_val_acc: 0.8309999704360962
+best_val_acc: 0.8349999785423279

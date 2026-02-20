@@ -1,0 +1,10 @@
+tag: n9__aug-imagedatagenerator__bs128__run1
+n: 9
+aug_method: imagedatagenerator
+batch_size: 128
+run_id: 1
+epochs: 200
+seconds: 11677.221288442612
+final_train_acc: 0.954022228717804
+final_val_acc: 0.9043999910354614
+best_val_acc: 0.9057999849319458
