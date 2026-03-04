@@ -1,0 +1,375 @@
+CIFAR-10 Coursework – Rubric Audit Report
+==========================================
+Notebook: CIFAR10_Neural_Networks_Coursework.ipynb
+Generated: 2026-03-03
+Auditor: automated rubric-alignment pass
+
+Required structure (Sections 1–7):
+  1. Problem definition, dataset description and data preparation (5 %)
+  2. Model building, training and evaluation (20 %)
+  3. Model improvement – without using pretrained models (20 %)
+  4. Model development – using a pretrained model with fine tuning (20 %)
+  5. The best model (15 %)
+  6. Visualisation of the model (10 %): filters, intermediate activations, class activation heatmaps (Grad-CAM)
+  7. Discussion (10 %): summary, discuss visualisation results
+
+─────────────────────────────────────────────────────────────────────────────
+ABSTRACT
+─────────────────────────────────────────────────────────────────────────────
+What exists now
+  A short abstract is present, summarising goals and methods at a high level.
+
+Rubric / structure gaps
+  • The abstract is cut off mid-sentence in the source Markdown. The full
+    sentence ending is missing (likely the original had it but the file was
+    saved with a truncated cell).
+  • No explicit statement of the final achieved accuracies is given; adding
+    a one-line result summary would strengthen it.
+
+Concrete fixes to apply
+  - Verify and complete the truncated abstract sentence.
+  - Add a brief sentence mentioning the best test accuracy achieved
+    (transfer learning model) and how the project is structured.
+
+Risk level: Low
+
+
+─────────────────────────────────────────────────────────────────────────────
+SECTION 1 – Problem definition, dataset description and data preparation (5 %)
+─────────────────────────────────────────────────────────────────────────────
+What exists now
+  Heading: "# 1 | Problem and Data"
+  Contains: task specification, dataset description, normalisation,
+  train/val split, one-hot encoding, tf.data pipeline, and data-augmentation
+  pipeline with both ImageDataGenerator and a custom GPU layer.
+
+Rubric / structure gaps
+  • Heading title does not exactly match the rubric wording.
+    Required: "1. Problem definition, dataset description and data preparation"
+  • Cell 15 is truncated mid-sentence: "This was due to the CP" – text is
+    cut off.
+  • No explicit statement that a fixed random seed is set before data splits
+    to ensure reproducibility. Although `set_random_seed(128)` appears in
+    later code cells, the split itself (in cell 4) relies on numpy slicing
+    with no explicit seed guard shown.
+  • The tf.data pipeline cell (cell 11) has a very short narrative and lacks
+    a code cell – the pipeline is introduced in prose but implemented
+    implicitly inside other cells; this should be explicit.
+  • Typo: "seperate" (cell 7) should be "separate".
+
+Concrete fixes to apply
+  - Rename section heading to match rubric exactly.
+  - Complete the truncated sentence in cell 15 (describe the custom affine
+    layer motivation clearly).
+  - Add a one-line reproducibility note to cell 4 pointing to the seed set
+    in cell 13.
+  - Fix typo "seperate" → "separate".
+
+Risk level: Low
+
+
+─────────────────────────────────────────────────────────────────────────────
+SECTION 2 – Model building, training and evaluation (20 %)
+─────────────────────────────────────────────────────────────────────────────
+What exists now
+  Heading: "# 2. Baseline Model"
+  Contains: baseline LeNet-style architecture, training config, training
+  code (gated behind `if False:` pattern? – actually NOT gated: cell 21
+  calls `baseline_model.fit(...)` without a guard), evaluation, and
+  key observations.
+
+Rubric / structure gaps
+  • Heading title does not match rubric wording.
+    Required: "2. Model building, training and evaluation"
+    (using a period separator instead of the pipe used in other sections,
+    and missing the rubric wording).
+  • Cell 21 runs `baseline_model.fit(...)` unconditionally. The problem
+    statement requires that long-training calls be gated behind
+    `if False:` or flagged as "optional re-run" cells.
+  • The baseline accuracy figure is stated in prose (~70% validation) but
+    no test-accuracy number is explicitly stated in text (only revealed
+    by the evaluate cell output, which is cleared).
+  • Section 2 results are referenced in later sections but the final test
+    accuracy value should appear explicitly in a Markdown cell so it
+    is readable without executing code.
+  • No explicit seed before `baseline_model.fit(...)`.
+
+Concrete fixes to apply
+  - Rename heading to match rubric.
+  - Wrap cell 21 training call in `if False:` with a comment pointing to
+    saved model / history files (or add note that training was already
+    completed and results loaded).
+  - Add a Markdown sentence explicitly stating the final baseline test
+    accuracy (from saved evaluation, already available in prose context).
+  - Add seed comment before training cell.
+
+Risk level: Med
+
+
+─────────────────────────────────────────────────────────────────────────────
+SECTION 3 – Model improvement – without using pretrained models (20 %)
+─────────────────────────────────────────────────────────────────────────────
+What exists now
+  Heading: "# 3. Improved Model"
+  Contains: three challengers (data augmentation + capacity; callbacks;
+  ResNet with BN), robust evaluation, and comparison table.
+
+Rubric / structure gaps
+  • Heading does not match rubric wording.
+    Required: "3. Model improvement – without using pretrained models"
+  • Uses period separator ("3.") rather than pipe ("3 |") used in sections
+    4–7, creating visual inconsistency (though this is minor).
+  • Cell 30 training code is correctly gated behind `if False:`.
+  • Cell 50 (`evaluate_model_robust`) – this re-trains models multiple
+    times; it should be gated behind `if False:` and results loaded from
+    `evaluations/robust_evaluation_results.npy`. Cell 51 does load saved
+    results, but cell 50 defines the evaluation function that triggers
+    re-training if called – needs a guard.
+  • The "champion" chosen at the end of Section 3 is the ResNet n=11,
+    batch 64 model (Cell 47 analysis), but the robust comparison (cell 52)
+    may contradict this if the augmented batch-1024 model has a higher
+    mean test accuracy – the narrative should be explicit about which model
+    is Section 3 champion and why.
+  • Typos: "adress" → "address" (cell 36), "ovefits" → "overfits" (cell 20).
+
+Concrete fixes to apply
+  - Rename heading to match rubric exactly.
+  - Confirm that `evaluate_model_robust` calls are inside `if False:` or
+    are clearly documented as "already executed, do not re-run".
+  - Add an explicit "Section 3 Champion" note identifying the winning model
+    by name, architecture, and approximate test accuracy.
+  - Fix typos.
+
+Risk level: Med
+
+
+─────────────────────────────────────────────────────────────────────────────
+SECTION 4 – Model development – using a pretrained model with fine tuning (20 %)
+─────────────────────────────────────────────────────────────────────────────
+What exists now
+  Heading: "# 4 | Model development – using a pretrained model with fine tuning"
+  Contains: motivation, preprocessing pipeline, training protocol,
+  experiment cells, results loading, comparison table, and narrative.
+
+Rubric / structure gaps
+  • Subsections jump from 4.2 to 4.4; **section 4.3 is entirely missing**.
+    The subsection numbering goes: 4.1, 4.2, 4.4, 4.5, 4.6, 4.7.
+    A logical 4.3 would cover "Model architecture / head design for transfer
+    learning", which is referenced in the code (build_pretrained_model) but
+    not given a markdown heading.
+  • Section heading matches rubric almost exactly – only capitalisation
+    differs ("fine tuning" vs rubric "fine tuning") – acceptable.
+  • Cell 68 narrative states "best performing pretrained model achieving a
+    test accuracy of 95.7%" – this value must be supported by saved history
+    files (tl_res_test.npy). It is stated as a fact with no qualification
+    about what seed or epoch it was measured at. A brief caveat would
+    improve academic rigour.
+  • Typos: "ahve" → "have" (cell 55), "propper" → "proper" (cell 83),
+    "EffieicntNetB0" → "EfficientNetB0" (cell 68).
+  • Citation gap: EfficientNet (Tan & Le, 2019) and ResNet50V2 (He et al.,
+    2016) are used but not cited in Section 4.
+
+Concrete fixes to apply
+  - Add missing subsection 4.3 (e.g. "## 4.3 | Classification head design")
+    describing the `build_pretrained_model` helper (global average pooling,
+    batch norm, dropout, dense head).
+  - Fix the 4.2 → 4.4 numbering gap.
+  - Add citations for EfficientNet and ResNet50V2 in Section 4.
+  - Fix typos.
+  - Add a brief note that the 95.7% figure comes from the saved
+    tl_res_test.npy file.
+
+Risk level: Med
+
+
+─────────────────────────────────────────────────────────────────────────────
+SECTION 5 – The best model (15 %)
+─────────────────────────────────────────────────────────────────────────────
+What exists now
+  Heading: "# 5 | The best model"
+  Contains: selection criteria, best_model_fn definition, ensembling code
+  (gated behind `if False:`), and ensemble results loading.
+
+Rubric / structure gaps
+  • Heading matches rubric.
+  • The argument for "best model" in cell 69 is clear: pretrained ResNet50V2.
+    However, no direct side-by-side comparison table is shown in Section 5
+    itself; the evidence is scattered across Sections 3–4. A brief summary
+    table in Section 5.1 would strengthen the argument.
+  • Cell 74 loads ensemble_results.npy. The saved file must exist for this
+    cell to work. If file is missing the cell will throw an error (no
+    try/except or fallback). This could hurt reproducibility marks.
+  • The compute-cost criterion is listed but not discussed quantitatively
+    (training time per model is not mentioned).
+
+Concrete fixes to apply
+  - Add a brief summary comparison table (text/markdown) in Section 5.1
+    listing Baseline, S3 champion, EfficientNetB0 TL, ResNet50V2 TL, and
+    Ensemble with approximate test accuracies.
+  - Wrap ensemble results load in a try/except fallback (or add a comment
+    noting that the .npy file must exist).
+  - Add a note on approximate training time for the best model to address
+    the compute-cost criterion.
+
+Risk level: Low-Med
+
+
+─────────────────────────────────────────────────────────────────────────────
+SECTION 6 – Visualisation of the model (10 %)
+─────────────────────────────────────────────────────────────────────────────
+What exists now
+  Heading: "# 6 | Visualisation of the model"
+  Contains: three required visualisations (kernels, feature maps, Grad-CAM).
+
+Rubric / structure gaps
+  • CRITICAL INCONSISTENCY: The Section 6 introduction (cell 75) states:
+    "This section visualises the internal behaviour of the best-performing
+    CIFAR-trained ResNet with Batch Normalisation (Section 3 champion)."
+    However, the actual code (cell 76) loads:
+      Model_Path = 'saved_models/augmented_model_batch_1024.keras'
+    This is the *Challenger 1* augmented ConvNet (batch size 1024), NOT the
+    ResNet with BN. The narrative description does not match the model being
+    visualised. This is a major readability/academic integrity issue.
+  • The narrative in cells 77, 79, 81 and the discussion in Section 7.3
+    should reference the actual loaded model (augmented ConvNet), not the
+    ResNet champion.
+  • No Grad-CAM citation. Grad-CAM is a published algorithm (Selvaraju et al.,
+    2017); the implementation should acknowledge this.
+  • Section 7.3 visualisation discussion correctly identifies noisy kernels
+    and feature hierarchy, which is consistent with a ConvNet, but the
+    framing as "ResNet" is incorrect.
+
+Concrete fixes to apply
+  - Update Section 6 intro to correctly identify the loaded model as the
+    augmented ConvNet (Challenger 1 batch-1024) or, alternatively, change
+    the Model_Path to load the ResNet model if it is saved.
+  - Add a note explaining why this model was chosen for visualisation
+    (e.g. simpler architecture → clearer filter/activation interpretation,
+    or "best saved non-pretrained model available").
+  - Add citation for Grad-CAM (Selvaraju et al., 2017).
+  - Update Section 7.3 to consistently reference the model actually used
+    for visualisation.
+
+Risk level: High (inconsistency between stated and actual model)
+
+
+─────────────────────────────────────────────────────────────────────────────
+SECTION 7 – Discussion (10 %)
+─────────────────────────────────────────────────────────────────────────────
+What exists now
+  Heading: "# 7 | Discussion"
+  Contains: summary of findings (7.1), technique contributions (7.2),
+  visualisation discussion (7.3).
+
+Rubric / structure gaps
+  • Rubric requires "summary" and "discuss visualisation results" – both
+    are present; structure is good.
+  • Section 7.3 references "noisy kernels" and "feature hierarchy" in the
+    context of the ResNet (because Section 6 intro is misleading), but these
+    observations are actually consistent with the augmented ConvNet. Once
+    Section 6 is corrected, Section 7.3 should also be updated to name the
+    correct model.
+  • Typo: "propper" (in cell 83) should be "proper".
+  • Limitations section is absent. For 70+ marks, evidence of critical
+    reflection (what didn't work, what could be improved) is expected.
+    Section 8 "Reflections" partially covers this but is outside the
+    required structure.
+
+Concrete fixes to apply
+  - Add a brief "Limitations and future work" subsection (7.4) summarising
+    key constraints and what would be done differently.
+  - Move or reference Section 8 "Reflections" content within Section 7 or
+    clearly label Section 8 as "Appendix: Technical Reflections".
+  - Correct model name reference in 7.3 to match Section 6 fix.
+  - Fix typo "propper" → "proper".
+
+Risk level: Low-Med
+
+
+─────────────────────────────────────────────────────────────────────────────
+SECTION 8 – Reflections (not in required structure)
+─────────────────────────────────────────────────────────────────────────────
+What exists now
+  Heading: "# 8 | Reflections"
+  Contains: data augmentation bottleneck experience, ResNet batch size issue.
+
+Rubric / structure gaps
+  • Section 8 is not part of the required structure (only Sections 1–7 are
+    required). Having a Section 8 is not harmful but may confuse the marker.
+  • The content is valuable (demonstrates reflection and process awareness)
+    but should be labelled as an appendix or folded into Section 7.
+
+Concrete fixes to apply
+  - Rename to "Appendix A: Technical Reflections" or move content into a
+    Section 7.4 "Limitations and Reflections".
+
+Risk level: Low
+
+
+─────────────────────────────────────────────────────────────────────────────
+CROSS-CUTTING ISSUES
+─────────────────────────────────────────────────────────────────────────────
+
+1. ACADEMIC INTEGRITY / CITATIONS
+   • CIFAR-10: Krizhevsky & Hinton (2009) – cited in cell 1. ✓
+   • ResNet: He et al. (2016) – cited in cell 42. ✓
+   • Grad-CAM: Selvaraju et al. (2017) – NOT cited. ✗
+   • EfficientNet: Tan & Le (2019) – NOT cited. ✗
+   • ResNet50V2 / Keras Applications – implicit, should be acknowledged.
+   • Data augmentation approach (ImageDataGenerator usage) – no
+     acknowledgement of Keras documentation / origin of technique.
+   Fix: Add a "References" subsection at the end of the notebook listing
+   all cited works, plus inline parenthetical citations in the text where
+   the methods are first introduced.
+
+2. REPRODUCIBILITY
+   • Global seed (tf.keras.utils.set_random_seed) is called inconsistently
+     across cells. It appears in cells 13 and 19 but is commented out in
+     cells 21 and 30.
+   • The saved_models directory is referenced (e.g.
+     saved_models/augmented_model_batch_1024.keras) but this directory is
+     not present in the repository. A clear note that models must be
+     re-trained or downloaded if the .keras files are absent is needed.
+   • model.fit() in cell 21 (baseline) is NOT gated. Risk of accidental
+     long re-train.
+   Fix: Add a "Reproducibility" note near the top of the notebook (after
+   the abstract) documenting: global seed value, Python/TF/Keras versions,
+   hardware used, and how to re-run training (point to if False: cells).
+   Gate cell 21 behind `if False:`.
+
+3. WORD COUNT
+   • The rubric specifies ≤ 3000 words (excluding code, tables, plots,
+     figures, references).
+   • No word-count estimate is provided anywhere in the notebook.
+   Fix: Add a Markdown cell near the end giving word-count guidance and
+   optionally a code cell (not run by default) that estimates word count
+   from Markdown cells.
+
+4. PRESENTATION / TYPOS
+   • "kears" → "Keras" (cell 15)
+   • "seperate" → "separate" (cell 7)
+   • "adress" → "address" (cell 36)
+   • "ovefits" → "overfits" (cell 20)
+   • "ahve" → "have" (cell 55)
+   • "propper" → "proper" (cell 83)
+   • "EffieicntNetB0" → "EfficientNetB0" (cell 68)
+   • Cell 15 is truncated mid-sentence ("This was due to the CP...").
+   Fix: Correct all typos; complete truncated cell.
+
+5. SECTION HEADING FORMAT INCONSISTENCY
+   • Sections 2 and 3 use period separators ("2.", "3.") while Sections
+     4–7 use pipe separators ("4 |", "5 |", etc.).
+   Fix: Standardise all section headings to use pipe separators and match
+     the exact wording of the marking rubric.
+
+─────────────────────────────────────────────────────────────────────────────
+RISK SUMMARY
+─────────────────────────────────────────────────────────────────────────────
+HIGH   – Section 6 model inconsistency (text says ResNet, code loads ConvNet)
+MED    – Missing Grad-CAM and EfficientNet citations
+MED    – Section headings do not match rubric wording (Sections 1–3)
+MED    – Baseline training cell (cell 21) not gated behind if False:
+MED    – Missing Section 4.3 subsection
+LOW    – No word-count estimate
+LOW    – Section 8 not in required structure
+LOW    – Minor typos affecting readability
